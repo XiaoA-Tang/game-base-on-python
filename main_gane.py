@@ -27,7 +27,7 @@ MAX_OBSTACLE_INTERVAL = 2000  # 最长障碍物生成时间间隔（毫秒）
 
 def game_end_screen():
     font = pygame.font.SysFont("simhei", 55)
-    utils.draw_text('Game End', font, RED, screen, SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 - 100)
+    utils.draw_text_centered('Game End', font, RED, screen, SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 50)
 
     end_screen_active = True
     while end_screen_active:
@@ -48,6 +48,23 @@ def game_end_screen():
         utils.draw_button('退出游戏', SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 + 60, 200, 50, RED, (200, 0, 0))
 
         pygame.display.update()
+
+def wait_for_start():
+    waiting = True
+    font = pygame.font.SysFont("simhei", 40)
+    while waiting:
+        screen.fill(WHITE)
+        utils.draw_text_centered("Press 'space' to start", font, BLACK, screen, SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 15)
+        pygame.display.flip()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                return False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    waiting = False
+                    return True
 
 def main_game_loop():
     dino = Dino()
@@ -97,7 +114,11 @@ def main_game_loop():
     return True
 
 if __name__ == "__main__":
-    while main_game_loop():
+    while True:
+        if not wait_for_start():
+            break
+        if not main_game_loop():
+            break
         if not game_end_screen():
             break
     pygame.quit()

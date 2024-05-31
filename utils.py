@@ -6,6 +6,11 @@ def draw_text(text, font, color, surface, x, y):
     textrect.topleft = (x, y)
     surface.blit(textobj, textrect)
 
+def draw_text_centered(text, font, color, surface, x, y):
+    textobj = font.render(text, True, color)
+    textrect = textobj.get_rect(center=(x, y))
+    surface.blit(textobj, textrect)
+
 def draw_button(text, x, y, w, h, color, hover_color, action=None):
     screen = pygame.display.get_surface()
     mouse = pygame.mouse.get_pos()
