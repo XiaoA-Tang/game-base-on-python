@@ -1,0 +1,1 @@
+运行main_game.py来开始游戏
