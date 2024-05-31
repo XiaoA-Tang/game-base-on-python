@@ -1,5 +1,7 @@
 import pygame
 
+last_obstacle_x = 0  # 全局变量，用于存储最近生成的障碍物位置
+
 # 障碍物类
 class Obstacle(pygame.sprite.Sprite):
     def __init__(self, x, y):
