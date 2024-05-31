@@ -1,5 +1,8 @@
 import pygame
 import random
+from dino import Dino
+from obstacle import Obstacle
+import utils
 
 # 初始化Pygame
 pygame.init()
@@ -13,76 +16,12 @@ pygame.display.set_caption("小恐龙")  # 设置标题
 
 # 颜色定义
 WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 
-# 小恐龙类
-class Dino(pygame.sprite.Sprite):
-    def __init__(self):
-        super().__init__()
-        self.image = pygame.Surface((40, 40))  # 40x40像素的图片 小恐龙
-        self.image.fill(BLACK)
-        self.rect = self.image.get_rect()
-        self.rect.x = 50  # 初始位置在屏幕左侧50像素处
-        self.rect.y = SCREEN_HEIGHT - 100  # 初始位置在屏幕底部100像素处
-        self.jump_speed = -15
-        self.gravity = 1  # 重力加速度
-        self.velocity = 0  # 速度
-        self.is_jumping = False  # 初始化时不在跳跃状态
-
-    def update(self):
-        if self.is_jumping:
-            self.velocity += self.gravity
-            self.rect.y += self.velocity
-            if self.rect.y >= SCREEN_HEIGHT - 100:
-                self.rect.y = SCREEN_HEIGHT - 100
-                self.is_jumping = False
-                self.velocity = 0
-
-    def jump(self):
-        if not self.is_jumping:
-            self.is_jumping = True
-            self.velocity = self.jump_speed
-
-# 障碍物类
-class Obstacle(pygame.sprite.Sprite):
-    def __init__(self, x, y):
-        super().__init__()
-        self.image = pygame.Surface((20, 40))
-        self.image.fill(BLACK)
-        self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
-
-    def update(self):
-        self.rect.x -= 5
-        if self.rect.x < -20:
-            self.kill()
-
-def draw_text(text, font, color, surface, x, y):
-    textobj = font.render(text, True, color)
-    textrect = textobj.get_rect()
-    textrect.topleft = (x, y)
-    surface.blit(textobj, textrect)
-
-def draw_button(text, x, y, w, h, color, hover_color, action=None):
-    mouse = pygame.mouse.get_pos()
-    click = pygame.mouse.get_pressed()
-
-    if x + w > mouse[0] > x and y + h > mouse[1] > y:
-        pygame.draw.rect(screen, hover_color, (x, y, w, h))
-        if click[0] == 1 and action is not None:
-            action()
-    else:
-        pygame.draw.rect(screen, color, (x, y, w, h))
-
-    small_text = pygame.font.SysFont("simhei", 20)
-    draw_text(text, small_text, BLACK, screen, x + 10, y + 10)
-
 def game_end_screen():
     font = pygame.font.SysFont("simhei", 55)
-    draw_text('Game End', font, RED, screen, SCREEN_WIDTH//2 - 100, SCREEN_HEIGHT//2 - 100)
+    utils.draw_text('Game End', font, RED, screen, SCREEN_WIDTH//2 - 100, SCREEN_HEIGHT//2 - 100)
 
     end_screen_active = True
     while end_screen_active:
@@ -99,8 +38,8 @@ def game_end_screen():
                         pygame.quit()
                         return False
 
-        draw_button('再来一把', SCREEN_WIDTH//2 - 100, SCREEN_HEIGHT//2, 200, 50, GREEN, (0, 200, 0))
-        draw_button('退出游戏', SCREEN_WIDTH//2 - 100, SCREEN_HEIGHT//2 + 60, 200, 50, RED, (200, 0, 0))
+        utils.draw_button('再来一把', SCREEN_WIDTH//2 - 100, SCREEN_HEIGHT//2, 200, 50, GREEN, (0, 200, 0))
+        utils.draw_button('退出游戏', SCREEN_WIDTH//2 - 100, SCREEN_HEIGHT//2 + 60, 200, 50, RED, (200, 0, 0))
 
         pygame.display.update()
 
