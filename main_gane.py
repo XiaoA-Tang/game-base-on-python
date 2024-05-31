@@ -19,6 +19,10 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 
+# 障碍物生成间隔
+MIN_OBSTACLE_DISTANCE = 200  # 最小障碍物间隔距离
+MAX_OBSTACLE_INTERVAL = 2000  # 最长障碍物生成时间间隔（毫秒）
+
 def game_end_screen():
     font = pygame.font.SysFont("simhei", 55)
     utils.draw_text('Game End', font, RED, screen, SCREEN_WIDTH//2 - 100, SCREEN_HEIGHT//2 - 100)
@@ -51,6 +55,7 @@ def main_game_loop():
 
     clock = pygame.time.Clock()
     running = True
+    last_obstacle_time = pygame.time.get_ticks()
     while running:
         for event in pygame.event.get():  # 处理事件
             if event.type == pygame.QUIT:  # 退出事件
@@ -60,10 +65,12 @@ def main_game_loop():
                 if event.key == pygame.K_SPACE:  # 空格键跳跃
                     dino.jump()  # 跳跃
 
-        if random.randint(1, 100) > 98:  # 随机生成障碍物
+        current_time = pygame.time.get_ticks()
+        if current_time - last_obstacle_time > MAX_OBSTACLE_INTERVAL or (not obstacles and current_time - last_obstacle_time > MIN_OBSTACLE_DISTANCE):
             obstacle = Obstacle(SCREEN_WIDTH, SCREEN_HEIGHT - 100)  # 障碍物在屏幕右侧
             all_sprites.add(obstacle)  # 添加障碍物到精灵组
             obstacles.add(obstacle)  # 添加障碍物到障碍物组
+            last_obstacle_time = current_time
 
         all_sprites.update()
 
