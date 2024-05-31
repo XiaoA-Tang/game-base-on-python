@@ -7,7 +7,8 @@ pygame.init()
 # 屏幕尺寸
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 400
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))    # 创建屏幕
+pygame.display.set_caption("小恐龙")  # 设置标题
 
 # 颜色定义
 WHITE = (255, 255, 255)
@@ -18,15 +19,21 @@ class Dino(pygame.sprite.Sprite):
     # 初始化小恐龙
     def __init__(self):
         super().__init__()
-        self.image = pygame.Surface((40, 40))  // 40x40像素的矩形
+        self.image = pygame.Surface((40, 40))  # 40x40像素的图片 小恐龙
         self.image.fill(BLACK)
         self.rect = self.image.get_rect()
-        self.rect.x = 50
-        self.rect.y = SCREEN_HEIGHT - 100
+
+        # 小恐龙初始位置
+        self.rect.x = 50  # 初始位置在屏幕左侧50像素处
+        self.rect.y = SCREEN_HEIGHT - 100  # 初始位置在屏幕底部100像素处
+
+        # 小恐龙跳跃速度
         self.jump_speed = -15
-        self.gravity = 1
-        self.velocity = 0
-        self.is_jumping = False
+
+        # 小恐龙状态
+        self.gravity = 1  # 重力加速度
+        self.velocity = 0    # 速度
+        self.is_jumping = False  # 初始化时不在跳跃状态
 
     # 更新小恐龙状态
     def update(self):
