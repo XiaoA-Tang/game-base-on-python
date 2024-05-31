@@ -11,6 +11,7 @@ pygame.font.init()  # 初始化字体模块
 # 屏幕尺寸
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 400
+GROUND_HEIGHT = 300  # 地面的高度，对应Dino的脚部高度
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))  # 创建屏幕
 pygame.display.set_caption("小恐龙")  # 设置标题
 
@@ -18,14 +19,15 @@ pygame.display.set_caption("小恐龙")  # 设置标题
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
+BLACK = (0, 0, 0)
 
 # 障碍物生成间隔
-MIN_OBSTACLE_INTERVAL = 800  # 最小障碍物生成时间间隔（毫秒）
-MAX_OBSTACLE_INTERVAL = 2400  # 最长障碍物生成时间间隔（毫秒）
+MIN_OBSTACLE_INTERVAL = 1000  # 最小障碍物生成时间间隔（毫秒）
+MAX_OBSTACLE_INTERVAL = 2000  # 最长障碍物生成时间间隔（毫秒）
 
 def game_end_screen():
     font = pygame.font.SysFont("simhei", 55)
-    utils.draw_text('Game End', font, RED, screen, SCREEN_WIDTH//2 - 100, SCREEN_HEIGHT//2 - 100)
+    utils.draw_text('Game End', font, RED, screen, SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 - 100)
 
     end_screen_active = True
     while end_screen_active:
@@ -35,15 +37,15 @@ def game_end_screen():
                 return False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = event.pos
-                if SCREEN_WIDTH//2 - 100 <= mouse_pos[0] <= SCREEN_WIDTH//2 + 100:
-                    if SCREEN_HEIGHT//2 <= mouse_pos[1] <= SCREEN_HEIGHT//2 + 50:
+                if SCREEN_WIDTH // 2 - 100 <= mouse_pos[0] <= SCREEN_WIDTH // 2 + 100:
+                    if SCREEN_HEIGHT // 2 <= mouse_pos[1] <= SCREEN_HEIGHT // 2 + 50:
                         return True
-                    elif SCREEN_HEIGHT//2 + 60 <= mouse_pos[1] <= SCREEN_HEIGHT//2 + 110:
+                    elif SCREEN_HEIGHT // 2 + 60 <= mouse_pos[1] <= SCREEN_HEIGHT // 2 + 110:
                         pygame.quit()
                         return False
 
-        utils.draw_button('再来一把', SCREEN_WIDTH//2 - 100, SCREEN_HEIGHT//2, 200, 50, GREEN, (0, 200, 0))
-        utils.draw_button('退出游戏', SCREEN_WIDTH//2 - 100, SCREEN_HEIGHT//2 + 60, 200, 50, RED, (200, 0, 0))
+        utils.draw_button('再来一把', SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2, 200, 50, GREEN, (0, 200, 0))
+        utils.draw_button('退出游戏', SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 + 60, 200, 50, RED, (200, 0, 0))
 
         pygame.display.update()
 
@@ -57,6 +59,8 @@ def main_game_loop():
     running = True
     last_obstacle_time = pygame.time.get_ticks()
     next_obstacle_time = random.randint(MIN_OBSTACLE_INTERVAL, MAX_OBSTACLE_INTERVAL)  # 随机生成下一个障碍物时间间隔
+    start_time = pygame.time.get_ticks()  # 记录游戏开始时间
+    font = pygame.font.SysFont("simhei", 30)  # 设置字体
 
     while running:
         for event in pygame.event.get():  # 处理事件
@@ -69,7 +73,7 @@ def main_game_loop():
 
         current_time = pygame.time.get_ticks()
         if current_time - last_obstacle_time > next_obstacle_time:
-            obstacle = Obstacle(SCREEN_WIDTH, SCREEN_HEIGHT - 100)  # 障碍物在屏幕右侧
+            obstacle = Obstacle(SCREEN_WIDTH, GROUND_HEIGHT)  # 确保障碍物底部在地面高度
             all_sprites.add(obstacle)  # 添加障碍物到精灵组
             obstacles.add(obstacle)  # 添加障碍物到障碍物组
             last_obstacle_time = current_time
@@ -82,6 +86,10 @@ def main_game_loop():
 
         screen.fill(WHITE)  # 填充白色背景
         all_sprites.draw(screen)  # 绘制所有精灵
+
+        # 绘制得分
+        utils.draw_score(start_time, font, BLACK, screen, SCREEN_WIDTH - 150, 10)
+
         pygame.display.flip()  # 刷新屏幕
 
         clock.tick(30)

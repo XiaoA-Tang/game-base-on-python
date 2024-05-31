@@ -8,7 +8,7 @@ class Dino(pygame.sprite.Sprite):
         self.image.fill((0, 0, 0))
         self.rect = self.image.get_rect()
         self.rect.x = 50  # 初始位置在屏幕左侧50像素处
-        self.rect.y = 300  # 初始位置在屏幕底部100像素处
+        self.rect.y = 260  # 初始位置在屏幕底部140像素处，确保与障碍物底部对齐
         self.jump_speed = -15
         self.gravity = 1  # 重力加速度
         self.velocity = 0  # 速度
@@ -18,8 +18,8 @@ class Dino(pygame.sprite.Sprite):
         if self.is_jumping:
             self.velocity += self.gravity
             self.rect.y += self.velocity
-            if self.rect.y >= 300:
-                self.rect.y = 300
+            if self.rect.y >= 260:
+                self.rect.y = 260
                 self.is_jumping = False
                 self.velocity = 0
 
