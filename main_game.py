@@ -96,17 +96,25 @@ def main_game_loop():
             elif event.type == pygame.KEYDOWN:  # 按键事件
                 if event.key == pygame.K_SPACE:  # 空格键跳跃
                     dino.jump()  # 跳跃
+                elif event.key == pygame.K_s:  # S键趴下
+                    dino.crouch()  # 趴下
+                elif event.key == pygame.K_w:  # W键跳跃
+                    dino.jump()  # 跳跃
+            elif event.type == pygame.KEYUP:
+                if event.key == pygame.K_s:  # 松开S键
+                    dino.uncrouch()  # 取消趴下
 
         current_time = pygame.time.get_ticks()
         if current_time - last_obstacle_time > next_obstacle_time:
-            obstacle = Obstacle(SCREEN_WIDTH, GROUND_HEIGHT, obstacle_speed)  # 确保障碍物底部在地面高度
+            obstacle_type = random.choice(["normal", "crouch"])  # 随机选择障碍物类型
+            obstacle = Obstacle(SCREEN_WIDTH, GROUND_HEIGHT, obstacle_speed, obstacle_type)  # 确保障碍物底部在地面高度
             all_sprites.add(obstacle)  # 添加障碍物到精灵组
             obstacles.add(obstacle)  # 添加障碍物到障碍物组
             last_obstacle_time = current_time
             next_obstacle_time = calculate_obstacle_interval(obstacle_speed)  # 根据速度重新计算生成间隔
 
             # 增加障碍物移动速度
-            obstacle_speed += 0.1
+            obstacle_speed += 0.3
             # 同步更新所有已生成障碍物的速度
             for obstacle in obstacles:
                 obstacle.speed = obstacle_speed
