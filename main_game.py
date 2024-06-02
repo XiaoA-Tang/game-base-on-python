@@ -67,6 +67,7 @@ def wait_for_start():
                     return True
 
 def main_game_loop():
+    speed_up_factor = 0.99  # 速度加快的幅度
     dino = Dino()
     all_sprites = pygame.sprite.Group()  # 所有精灵组
     all_sprites.add(dino)  # 添加小恐龙到精灵组
@@ -94,7 +95,7 @@ def main_game_loop():
             all_sprites.add(obstacle)  # 添加障碍物到精灵组
             obstacles.add(obstacle)  # 添加障碍物到障碍物组
             last_obstacle_time = current_time
-            next_obstacle_time = random.randint(MIN_OBSTACLE_INTERVAL, MAX_OBSTACLE_INTERVAL)  # 更新下一个障碍物的随机时间间隔
+            next_obstacle_time = int(next_obstacle_time * speed_up_factor)  # 更新下一个障碍物的随机时间间隔
 
         all_sprites.update()
 

@@ -1,6 +1,4 @@
 import pygame
-
-# 小恐龙类
 class Dino(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -13,6 +11,7 @@ class Dino(pygame.sprite.Sprite):
         self.gravity = 1  # 重力加速度
         self.velocity = 0  # 速度
         self.is_jumping = False  # 初始化时不在跳跃状态
+        self.can_double_jump = False  # 是否可进行二连跳
 
     def update(self):
         if self.is_jumping:
@@ -22,8 +21,13 @@ class Dino(pygame.sprite.Sprite):
                 self.rect.y = 260
                 self.is_jumping = False
                 self.velocity = 0
+                self.can_double_jump = True  # 允许进行二连跳
 
     def jump(self):
         if not self.is_jumping:
             self.is_jumping = True
             self.velocity = self.jump_speed
+        elif self.can_double_jump:  # 如果可以进行二连跳
+            self.is_jumping = True
+            self.velocity = self.jump_speed
+            self.can_double_jump = False  # 已经进行了一次二连跳，不能再进行
