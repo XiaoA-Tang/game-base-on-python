@@ -12,7 +12,7 @@ pygame.font.init()  # 初始化字体模块
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 400
 GROUND_HEIGHT = 300  # 地面的高度，对应Dino的脚部高度
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))  # 创建屏幕
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))  # 创建固定尺寸的屏幕
 pygame.display.set_caption("小恐龙")  # 设置标题
 
 # 颜色定义
@@ -22,8 +22,15 @@ GREEN = (0, 255, 0)
 BLACK = (0, 0, 0)
 
 # 障碍物生成间隔
+INITIAL_OBSTACLE_INTERVAL = 2000  # 初始障碍物生成时间间隔（毫秒）
 MIN_OBSTACLE_INTERVAL = 1000  # 最小障碍物生成时间间隔（毫秒）
 MAX_OBSTACLE_INTERVAL = 2000  # 最长障碍物生成时间间隔（毫秒）
+MIN_INTERVAL = 300  # 确保障碍物生成间隔不低于300毫秒
+
+def calculate_obstacle_interval(speed):
+    # 根据速度调整障碍物生成间隔，速度越快，间隔越短
+    interval = max(MIN_OBSTACLE_INTERVAL / speed*10, MIN_INTERVAL)
+    return int(interval)
 
 def game_end_screen():
     font = pygame.font.SysFont("simhei", 55)
@@ -67,7 +74,8 @@ def wait_for_start():
                     return True
 
 def main_game_loop():
-    speed_up_factor = 0.99  # 速度加快的幅度
+    global obstacle_speed
+    obstacle_speed = 5  # 初始障碍物移动速度
     dino = Dino()
     all_sprites = pygame.sprite.Group()  # 所有精灵组
     all_sprites.add(dino)  # 添加小恐龙到精灵组
@@ -76,7 +84,7 @@ def main_game_loop():
     clock = pygame.time.Clock()
     running = True
     last_obstacle_time = pygame.time.get_ticks()
-    next_obstacle_time = random.randint(MIN_OBSTACLE_INTERVAL, MAX_OBSTACLE_INTERVAL)  # 随机生成下一个障碍物时间间隔
+    next_obstacle_time = INITIAL_OBSTACLE_INTERVAL  # 初始障碍物生成时间间隔
     start_time = pygame.time.get_ticks()  # 记录游戏开始时间
     font = pygame.font.SysFont("simhei", 30)  # 设置字体
 
@@ -91,11 +99,17 @@ def main_game_loop():
 
         current_time = pygame.time.get_ticks()
         if current_time - last_obstacle_time > next_obstacle_time:
-            obstacle = Obstacle(SCREEN_WIDTH, GROUND_HEIGHT)  # 确保障碍物底部在地面高度
+            obstacle = Obstacle(SCREEN_WIDTH, GROUND_HEIGHT, obstacle_speed)  # 确保障碍物底部在地面高度
             all_sprites.add(obstacle)  # 添加障碍物到精灵组
             obstacles.add(obstacle)  # 添加障碍物到障碍物组
             last_obstacle_time = current_time
-            next_obstacle_time = int(next_obstacle_time * speed_up_factor)  # 更新下一个障碍物的随机时间间隔
+            next_obstacle_time = calculate_obstacle_interval(obstacle_speed)  # 根据速度重新计算生成间隔
+
+            # 增加障碍物移动速度
+            obstacle_speed += 0.1
+            # 同步更新所有已生成障碍物的速度
+            for obstacle in obstacles:
+                obstacle.speed = obstacle_speed
 
         all_sprites.update()
 
