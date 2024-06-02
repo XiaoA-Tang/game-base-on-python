@@ -26,11 +26,13 @@ class Dino(pygame.sprite.Sprite):
             self.jump_count += 1  # 增加跳跃次数
 
     def crouch(self):
-        if self.on_ground:  # 只有在地面上才能趴下
-            self.is_crouching = True
-            self.image = self.image_crouch
-            self.rect = self.image.get_rect(midbottom=self.rect.midbottom)
-            self.rect.y = 275  # 设置趴下时的y轴位置，确保贴近地面
+        self.is_crouching = True
+        self.image = self.image_crouch
+        self.rect = self.image.get_rect(midbottom=self.rect.midbottom)
+        self.rect.y = 275  # 设置趴下时的y轴位置，确保贴近地面
+        self.velocity = 0  # 停止任何垂直运动
+        self.on_ground = True  # 强制设为在地面上
+        self.jump_count = 0  # 重置跳跃计数器
 
     def uncrouch(self):
         self.is_crouching = False
